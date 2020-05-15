@@ -1,4 +1,3 @@
-[![Anaconda-Server Badge](https://anaconda.org/dabadgarcia/caudal/badges/version.svg)](https://anaconda.org/dabadgarcia/caudal)  
 [![Anaconda-Server Badge](https://anaconda.org/dabadgarcia/caudal/badges/latest_release_date.svg)](https://anaconda.org/dabadgarcia/caudal)
 
 <br>
@@ -9,11 +8,10 @@
   * [About](#about)
   * [Installation](#installation)
   	* [Install Miniconda](#install-miniconda)
-	* [Install QiimeReporter](#install-qiimereporter)
+	* [Install Caudal](#install-caudal)
   * [Usage](#usage)
   * [Metadata](#metadata)  
   * [Output](#output)
-  * [Already using Qiime2?](#already-using-qiime2)
   * [Citation](#citation)
   * [License](#license)
 
@@ -21,7 +19,7 @@
 
 ## About
 
-CAUDAL is a straightforward pipeline for the analysis of Whole Genome sequences directly from raw Illumina paired-end data. It generates a final html report that can be opened in any web browser and easily shared between researchers.  
+Caudal is a straightforward pipeline for the analysis of Whole Genome sequences directly from raw Illumina paired-end data. It generates a final html report that can be opened in any web browser and easily shared between researchers.  
 
 <br>
 
@@ -31,7 +29,7 @@ CAUDAL has been developed as a [Conda](https://docs.conda.io/projects/conda/en/l
 
 ### Install Miniconda
 
-[Miniconda](https://docs.conda.io/en/latest/miniconda.html) provides the [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/) environment and package manager, and is the recommended way to install QiimeReporter: 
+[Miniconda](https://docs.conda.io/en/latest/miniconda.html) provides the [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/) environment and package manager, and is the recommended way to install Caudal: 
 
 ```
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
@@ -39,9 +37,9 @@ bash Miniconda3-latest-Linux-x86_64.sh
 conda update conda
 ```
 
-### Install QiimeReporter
+### Install Caudal
 
-Once you have [Miniconda](https://docs.conda.io/en/latest/miniconda.html) installed, run the following commands to install QiimeReporter:
+Once you have [Miniconda](https://docs.conda.io/en/latest/miniconda.html) installed, run the following commands to install Caudal:
 
 ```
 conda create -n caudal
