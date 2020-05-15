@@ -17,7 +17,7 @@
 
 ## About
 
-Caudal is a straightforward pipeline for the analysis of Whole Genome sequences directly from raw Illumina paired-end data. It generates a final html report that can be opened in any web browser and easily shared between researchers.  
+Caudal is a straightforward pipeline for the analysis of Whole Genome sequences directly from raw Oxford Nanopore Technologies data. It generates a final html report that can be opened in any web browser and easily shared between researchers.  
 
 <br>
 
