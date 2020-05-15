@@ -2,8 +2,6 @@
 
 <br>
 
-<br>
-
 ## Index  
   * [About](#about)
   * [Installation](#installation)
@@ -92,12 +90,13 @@ caudal sample-metadata.tsv --output output_folder -t 32
 ## Metadata
 
 A metadata text file is needed for CAUDAL to work by using the `-m/--metadata` option. This file will include all the information regarding the sample and requires an specific organization:  
-        - Columns must be tab separated
-        - First column must me called "Samples" and harbor samples names (avoid special characters)
-        - Second column must be called "Reads" and harbor the path to the reads (either fastq or fastq.gz)
-        - Third column must be called "Illumina_forward" and harbor the path to the R1 Illumina reads (either fastq or fastq.gz)
-        - Fourth column must be called "Illumina_reverse" and harbor the path to the R2 Illumina reads (either fastq or fastq.gz)
-        - Fith (and so on) columns are descriptive. They are no needed for the program but the information will appear in the report
+
+	- Columns must be tab separated
+	- First column must me called "Samples" and harbor samples names (avoid special characters)
+	- Second column must be called "Reads" and harbor the path to the reads (either fastq or fastq.gz)
+	- Third column must be called "Illumina_forward" and harbor the path to the R1 Illumina reads (either fastq or fastq.gz)
+	- Fourth column must be called "Illumina_reverse" and harbor the path to the R2 Illumina reads (either fastq or fastq.gz)
+	- Fith (and so on) columns are descriptive. They are no needed for the program but the information will appear in the report
           Add as much as you want.
 
 <br>
@@ -108,8 +107,6 @@ If you type `caudal example-metadata`, a template file called `sample-metadata.t
 
 ## Output
 Caudal stores every file generated during the analysis in three different directories, all of them included within the main output directory specified with the `-o/--output` option. 
-
-<br>
 
 Once the analysis is finished, Caudal summarizes the results in a interactive html report in your output directory. An example of the report file can be visualized [here](https://dabadgarcia.github.io/caudal/example_report.html).
 
