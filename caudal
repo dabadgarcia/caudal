@@ -17,8 +17,6 @@ ASSEMBLER="flye"
 CONFIG="$CAUDALDIR/../files/config_file.txt"
 CPUS=1
 DATE="$( date +"%Y-%m-%d" )"
-DOMLST=1
-DOPANGENOME=1
 FILTERING=0
 HYBRID=0
 METADATA=
@@ -27,8 +25,6 @@ OUTWD=
 REFERENCE=
 SAMPLE=
 TAB="$(printf '\t')"
-TITLEFILE=
-TITLE=
 
 ARGPARSED0=$0
 ALLARGSPARSED=$@
@@ -56,17 +52,11 @@ OTHER OPTIONS:
                         (default="$CONFIG")
 	--citation	Show citation
 	--filtering	Enables optional filtering with filtlong.
-	-g/--genera	Type genera name to allow special analysis (default='none')
-			Options available: 'Escherichia', 'Salmonella'
 	-h/--help	Show this help
 	--hybrid	Performs an hybrid assembly with illumina reads (path to the files must be specified in the metadata)
-	--no-mlst	Disable MLST analysis (default='0')
-	--no-pangenome	Disable pangenome analysis (default='0')
 	-r/--reference	Type path to reference genome (fasta, gbk) (default='none')
 			Reference will be used for contig ordering of the draft genome
 	-t/--threads	Number of threads to use (default=$CPUS) <integer>
-	--title		Path to a file containing the title in the project that will be used as title in the report
-			Avoid using special characters. CAUDAL will perform a default title if this option is not used
 	-v/--version	Show version
 
 
@@ -183,14 +173,6 @@ case $ARGS in
                 exit 1
             fi
             ;;
-        --no-mlst)
-            DOMLST=0
-            shift
-            ;;
-        --no-pangenome)
-            DOPANGENOME=0
-            shift
-            ;;
 	-o|--output)
 	    if [ "$2" ]; then
                 OUTPUT=$2
@@ -234,24 +216,6 @@ case $ARGS in
 	    else
 		echo -e '\nERROR: "-t/--threads" requires a numeric argument\n'
     	    fi
-	    ;;
-	--title)
-            if [ "$2" ]; then
-                TITLEFILE=$2
-                shift 2
-                if [ ! -e "$TITLEFILE" ]
-                    then echo -e "\nERROR: $TITLEFILE doesn't exist! Please check \n"
-                    exit 1
-                fi
-                if [ ! -s "$TITLEFILE" ]
-                    then echo -e "\nERROR: Size of $TITLEFILE is 0! Please check \n"
-                    exit 1
-                fi
-            else
-                echo -e '\nERROR: "--title" requires an argument'
-		echo -e 'Avoid using "--title" if you would like a title by default\n'
-                exit 1
-            fi
 	    ;;
 	-v|--version)
 	    echo "CAUDAL version $VERSION"
@@ -424,22 +388,15 @@ rm -f temp1 temp2
 ABRICATE="$( grep -w "^ABRICATE\s" $CONFIG | cut -f 2 -d "$TAB" )"
 BLASTBINS="$( grep -w "^BLAST-2\.6_or_later-BINARIES\s" $CONFIG | cut -f 2 -d "$TAB" )"
 CONVERT="$( grep -w "^CONVERT\s" $CONFIG | cut -f 2 -d "$TAB" )"
-FASTTREE="$( grep -w "^FASTTREE\s" $CONFIG | cut -f 2 -d "$TAB" )"
 FILTLONG="$( grep -w "^FILTLONG\s" $CONFIG | cut -f 2 -d "$TAB" )"
 FLYE="$( grep -w "^FLYE\s" $CONFIG | cut -f 2 -d "$TAB" )"
 GTDBTK="$( grep -w "^GTDBTK\s" $CONFIG | cut -f 2 -d "$TAB" )"
-#MAUVE="$( grep -w "^MAUVE\s" $CONFIG | cut -f 2 -d "$TAB" )"
-#MAUVEBINS="$( grep -w "^MAUVE-BINARIES\s" $CONFIG | cut -f 2 -d "$TAB" )"
-MLST="$( grep -w "^MLST\s" $CONFIG | cut -f 2 -d "$TAB" )"
 PARALLEL="$( grep -w "^PARALLEL\s" $CONFIG | cut -f 2 -d "$TAB" )"
-PROKKA="$( grep -w "^PROKKA\s" $CONFIG | cut -f 2 -d "$TAB" )"
 #REBALER="$( grep -w "^REBALER\s" $CONFIG | cut -f 2 -d "$TAB" )"
-ROARY="$( grep -w "^ROARY\s" $CONFIG | cut -f 2 -d "$TAB" )"
-ROARY2SVG="$( grep -w "^ROARY2SVG\s" $CONFIG | cut -f 2 -d "$TAB" )"
 RSCRIPT="$( grep -w "^RSCRIPT\s" $CONFIG | cut -f 2 -d "$TAB" )"
 UNICYCLER="$( grep -w "^UNICYCLER\s" $CONFIG | cut -f 2 -d "$TAB" )"
 
-for i in $ABRICATE $CONVERT $FASTTREE $FLYE $GTDBTK $MLST $PARALLEL $PROKKA $ROARY $ROARY2SVG $UNICYCLER; do
+for i in $ABRICATE $CONVERT $FLYE $GTDBTK $PARALLEL $UNICYCLER; do
         if command -v $i >/dev/null 2>&1 ; then
             echo "Software: $i found"
 #            echo -e "Version is: \c"
@@ -451,24 +408,6 @@ for i in $ABRICATE $CONVERT $FASTTREE $FLYE $GTDBTK $MLST $PARALLEL $PROKKA $ROA
 	    exit 1
         fi
 done
-
-#if [ -s $MAUVE ]; then 
-#	echo "Software: $MAUVE found"
-#else
-#	echo -e "\nERROR: Software $MAUVE not found! Please check if:"
-#        echo -e "\t * Software is not installed"
-#        echo -e "\t * Software is installed but the path in $CONFIG is incorrect\n"
-#        exit 1
-#fi
-#if command -v $MAUVEBINS/progressiveMauve >/dev/null 2>&1 ; then
-#        echo "Binaries for MAUVE found"
-#	export PATH=$MAUVEBINS:$PATH
-#else
-#        echo -e "\nERROR: Binaries for MAUVE not found! Please check if:"
-#        echo -e "\t * Binaries are not installed"
-#        echo -e "\t * Binaries are installed but the path in $CONFIG is incorrect\n"
-#        exit 1
-#fi
 
 # START WORKING
 ## CREATE WORKING DIRECTORY AND CREATE SAMPLES VARIABLE
@@ -649,122 +588,6 @@ date +"%Y-%m-%d %H:%M" >> $OUTWD/CAUDAL.log
 $GTDBTK classify_wf --genome_dir $OUTWD/draft_genomes/ --out_dir $OUTWD/species_identification/ --cpus $CPUS --extension fasta
  
 cut -f 1,2 $OUTWD/species_identification/gtdbtk.bac120.summary.tsv | sed '1d;s/d\_.*_//g' | sort > $OUTWD/species_identification/gtdbtk_summary.txt
-
-## CONTIG ORDERING
-if [ ! -z $REFERENCE ]; then
-	echo -e "Contig ordering against reference started at: \c" >> $OUTWD/CAUDAL.log
-	date +"%Y-%m-%d %H:%M" >> $OUTWD/CAUDAL.log
-	mkdir -p $OUTWD/genome_ordering
-	$PARALLEL -a $OUTWD/list.tmp -j $CPUS java -Xmx500m -cp $MAUVE org.gel.mauve.contigs.ContigOrderer -output $OUTWD/genome_ordering/{} -ref $REFERENCE -draft $OUTWD/draft_genomes/{}.fasta
-	for i in $SAMPLE; do 
-		ls -dt $OUTWD/genome_ordering/$i/* | tail -n +2 | xargs rm -rf
-		tr '[:lower:]' '[:upper:]' < $OUTWD/genome_ordering/$i/*/$i.fasta > $OUTWD/genome_ordering/$i.ordered.fasta
-		sed -i "s/LENGTH/length/" $OUTWD/genome_ordering/$i.ordered.fasta
-		sed -i "s/COV/cov/" $OUTWD/genome_ordering/$i.ordered.fasta
-		if [ -s $OUTWD/genome_ordering/$i.ordered.fasta ]; then
-		    mv $OUTWD/genome_ordering/$i.ordered.fasta $OUTWD/draft_genomes/$i.fasta
-		else
-		    echo -e "WARNING: $i genome couldn't be ordered. Not ordered genome will be used instead" >> $OUTWD/CAUDAL.log
-		fi
-	done
-fi
-#$PARALLEL -j $CPUS -a $OUTWD/list.tmp --gnu tar cfz $OUTWD/genome_ordering/{}.tgz -C $OUTWD/genome_ordering/ {}
-$PARALLEL -j $CPUS -a $OUTWD/list.tmp --gnu rm -rf $OUTWD/genome_ordering/
-
-## MLST
-if [ "$DOMLST" -ne "0" ] ; then
-	echo -e "MLST started at: \c" >> $OUTWD/CAUDAL.log
-	date +"%Y-%m-%d %H:%M" >> $OUTWD/CAUDAL.log
-	mkdir -p $OUTWD/mlst
-	$PARALLEL -j $CPUS -a $OUTWD/list.tmp $MLST $OUTWD/draft_genomes/{}\.fasta --nopath --quiet > $OUTWD/mlst/mlst-temp.tab
-	sed -i 's/\.fasta//' $OUTWD/mlst/mlst-temp.tab
-	sort $OUTWD/mlst/mlst-temp.tab > $OUTWD/mlst/mlst.tab
-	rm -f $OUTWD/mlst/mlst-temp*tab
-fi
-
-## ANTIBIOTIC RESISTANCE AND VIRULENCE GENES
-echo -e "Antibiotic resistance and virulence genes search started at: \c" >> $OUTWD/CAUDAL.log
-date +"%Y-%m-%d %H:%M" >> $OUTWD/CAUDAL.log
-
-mkdir -p $OUTWD/antibiotic_resistance_genes
-for i in resfinder card argannot; do
-	mkdir -p $OUTWD/antibiotic_resistance_genes/$i
-	$PARALLEL -j $CPUS -a $OUTWD/list.tmp --results $OUTWD/antibiotic_resistance_genes/$i/{}\_$i.tab $ABRICATE $OUTWD/draft_genomes/{}.fasta --db $i --nopath
-	rm -f $OUTWD/antibiotic_resistance_genes/$i/*err $OUTWD/antibiotic_resistance_genes/$i/*seq
-	for j in $SAMPLE; do
-		sed -i 's/.fasta//' $OUTWD/antibiotic_resistance_genes/$i/$j\_$i.tab
-	done
-done
-
-mkdir -p $OUTWD/virulence_genes
-$PARALLEL -j $CPUS -a $OUTWD/list.tmp --results $OUTWD/virulence_genes/{}\_vfdb.tab $ABRICATE $OUTWD/draft_genomes/{}.fasta --db vfdb --nopath
-rm -f $OUTWD/virulence_genes/*err $OUTWD/virulence_genes/*seq
-for i in $SAMPLE; do
-	sed -i 's/\.fasta//' $OUTWD/virulence_genes/$i\_vfdb.tab
-done
-
-## ANNOTATION
-echo -e "Annotation started at: \c" >> $OUTWD/CAUDAL.log
-date +"%Y-%m-%d %H:%M" >> $OUTWD/CAUDAL.log
-mkdir -p $OUTWD/annotation
-for i in $SAMPLE; do
-	sed 's/_cov.*//g' $OUTWD/draft_genomes/$i.fasta > $OUTWD/annotation/$i\_prokka.fasta
-	sed -i 's/NODE/N/g' $OUTWD/annotation/$i\_prokka.fasta
-	if [ ! -z $GENERA ]; then
-	    $PROKKA $OUTWD/annotation/$i\_prokka.fasta --outdir $OUTWD/annotation/$i\_annotation --prefix $i --locustag $i --genus $GENERA --usegenus --cpus $CPUS --force
-	else
-	    $PROKKA $OUTWD/annotation/$i\_prokka.fasta --outdir $OUTWD/annotation/$i\_annotation --prefix $i --locustag $i --cpus $CPUS --force
-	fi
-	rm -f $OUTWD/annotation/$i\_prokka.fasta
-done
-
-## PANGENOME
-if [ "$DOPANGENOME" -ne "0" ] ; then
-	echo -e "Pangenome analysis started at: \c" >> $OUTWD/CAUDAL.log
-	date +"%Y-%m-%d %H:%M" >> $OUTWD/CAUDAL.log
-	mkdir -p $OUTWD/gff
-	ln -s $OUTWD/annotation/*/*gff $OUTWD/gff/
-	$ROARY -e -n -f $OUTWD/pangenome -p $CPUS $OUTWD/gff/*gff
-	$FASTTREE -nt -gtr $OUTWD/pangenome/core_gene_alignment.aln > $OUTWD/pangenome/core_gene_alignment.newick
-	$ROARY2SVG $OUTWD/pangenome/gene_presence_absence.csv --colour=Blue > $OUTWD/pangenome/pangenome.svg
-	$CONVERT $OUTWD/pangenome/pangenome.svg $OUTWD/pangenome/pangenome.png
-	rm -rf $OUTWD/gff
-fi
-
-### PLASMIDFINDER
-echo -e "Plasmid search started at: \c" >> $OUTWD/CAUDAL.log
-date +"%Y-%m-%d %H:%M" >> $OUTWD/CAUDAL.log
-mkdir -p $OUTWD/plasmids
-$PARALLEL -j $CPUS -a $OUTWD/list.tmp --results $OUTWD/plasmids/{}\_plasmids.tab $ABRICATE $OUTWD/draft_genomes/{}.fasta --db plasmidfinder --nopath
-rm -f $OUTWD/plasmids/*err $OUTWD/plasmids/*seq
-for i in $SAMPLE; do
-	sed -i 's/.fasta//' $OUTWD/plasmids/$i\_plasmids.tab
-done
-
-# CAUDAL REPORT
-echo -e "CAUDAL report started at: \c" >> $OUTWD/CAUDAL.log
-date +"%Y-%m-%d %H:%M" >> $OUTWD/CAUDAL.log
-
-if [ ! -z "$TITLEFILE" ]; then
-	TITLE="$(<$TITLEFILE)"
-else
-	TITLE="$GENERA Analysis Performed on $DATE"
-fi
-echo $TITLE > $OUTWD/title_CAUDAL.tmp
-$CAUDALREPORT $OUTWD $METADATA $ABRICATE $CAUDALDIR $GENERA
-echo -e "$RSCRIPT -e 'library(rmarkdown); rmarkdown::render(\"$OUTWD/report_files/CAUDAL_report.Rmd\", \"html_document\", encoding=\"UTF-8\")'" > $OUTWD/render_report.sh
-chmod 755 $OUTWD/render_report.sh
-$OUTWD/render_report.sh
-
-if [ -s $OUTWD/report_files/CAUDAL_report.html ]; then
-	cp -f $OUTWD/report_files/CAUDAL_report.html $OUTWD/CAUDAL_report.html
-else
-	echo -e "WARNING: html report file could not be created" >> $OUTWD/CAUDAL.log
-fi
-
-tar cfz $OUTWD/report_files.tgz -C $OUTWD/ report_files
-rm -f $OUTWD/render_report.sh
-rm -rf $OUTWD/report_files
 
 ## Things to do before finishing
 rm -f $OUTWD/list.tmp
