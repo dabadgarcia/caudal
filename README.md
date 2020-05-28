@@ -9,7 +9,6 @@
 	* [Install Caudal](#install-caudal)
   * [Usage](#usage)
   * [Metadata](#metadata)  
-  * [Output](#output)
   * [Citation](#citation)
   * [License](#license)
 
@@ -17,7 +16,7 @@
 
 ## About
 
-Caudal is a straightforward pipeline for the analysis of Whole Genome sequences directly from raw Oxford Nanopore Technologies data. It generates a final html report that can be opened in any web browser and easily shared between researchers.  
+Caudal is a straightforward pipeline for the assembly of genomes directly from raw Oxford Nanopore Technologies sequences.   
 
 <br>
 
@@ -65,17 +64,11 @@ OTHER OPTIONS:
                         (default="/home/biotec/software/../files/config_file.txt")
         --citation      Show citation
         --filtering     Enables optional filtering with filtlong.
-        -g/--genera     Type genera name to allow special analysis (default='none')
-                        Options available: 'Escherichia', 'Salmonella'
         -h/--help       Show this help
         --hybrid        Performs an hybrid assembly with illumina reads (path to the files must be specified in the metadata)
-        --no-mlst       Disable MLST analysis (default='0')
-        --no-pangenome  Disable pangenome analysis (default='0')
         -r/--reference  Type path to reference genome (fasta, gbk) (default='none')
                         Reference will be used for contig ordering of the draft genome
         -t/--threads    Number of threads to use (default=1) <integer>
-        --title         Path to a file containing the title in the project that will be used as title in the report
-                        Avoid using special characters. CAUDAL will perform a default title if this option is not used
         -v/--version    Show version
         
 ```
@@ -102,13 +95,6 @@ A metadata text file is needed for CAUDAL to work by using the `-m/--metadata` o
 <br>
 
 If you type `caudal example-metadata`, a template file called `sample-metadata.tsv` will be created in your working directory. You can also download the file [here](https://dabadgarcia.github.io/caudal/sample-metadata.tsv).
-
-<br>
-
-## Output
-Caudal stores every file generated during the analysis in three different directories, all of them included within the main output directory specified with the `-o/--output` option. 
-
-Once the analysis is finished, Caudal summarizes the results in a interactive html report in your output directory. An example of the report file can be visualized [here](https://dabadgarcia.github.io/caudal/example_report.html).
 
 <br>
 
